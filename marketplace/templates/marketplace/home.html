@@ -1,0 +1,242 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}Oreand — Find a website already built. Meet who built it.{% endblock %}
+
+{% block content %}
+</div> <!-- Close default wrap container to make hero full-width -->
+
+<!-- HERO with search -->
+<section class="hero blueprint-bg">
+  <div class="wrap inner">
+    <span class="eyebrow mono">Search · Browse · Connect</span>
+    <h1>Find a website that's already built.<br>Meet the developer who built it.</h1>
+    <p class="lede">Oreand is a live gallery of real, deployed websites. Search your industry, open the ones you like, and message the developer directly — right here on Oreand.</p>
+    
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search by business type — e.g. dairy, salon, gym, cafe...">
+      <button id="search-btn">Search</button>
+    </div>
+    
+    <div class="chips">
+      {% for category in categories %}
+        <span class="chip" data-category="{{ category.name }}">{{ category.name }}</span>
+      {% empty %}
+        <span class="chip">Dairy</span>
+        <span class="chip">Restaurant</span>
+        <span class="chip">Salon</span>
+        <span class="chip">Gym</span>
+        <span class="chip">Clothing store</span>
+        <span class="chip">Real estate</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="wrap"> <!-- Reopen wrap container -->
+
+<!-- BROWSE SECTION -->
+<section id="browse">
+  <div class="section-head">
+    <span class="eyebrow mono">Live listings</span>
+    <h2>Every site here is already live.</h2>
+    <p>No mockups, no guessing. Click through to the actual deployed site, then message the developer if it's close to what you want.</p>
+  </div>
+
+  <div class="listing-grid">
+    {% for listing in listings %}
+      <div class="listing-card">
+        <div class="browser-chrome">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <div class="url mono">{{ listing.live_url }}</div>
+        </div>
+        
+        <div class="preview">
+          {% if listing.preview_image %}
+            <img src="{{ listing.preview_image.url }}" alt="{{ listing.title }} preview">
+          {% else %}
+            <!-- Generate a beautiful dynamic SVG depending on the category or title -->
+            {% if "dairy" in listing.title|lower or "dairy" in listing.category.name|lower %}
+              <svg viewBox="0 0 300 150"><rect width="300" height="150" fill="#EDF2F1"/><rect x="0" y="0" width="300" height="26" fill="#25445A"/><rect x="20" y="46" width="120" height="10" fill="#1C2B3A"/><rect x="20" y="64" width="180" height="6" fill="#4A7A96"/><rect x="20" y="76" width="150" height="6" fill="#4A7A96"/><rect x="20" y="98" width="70" height="28" rx="3" fill="#D89B3C"/><circle cx="240" cy="90" r="30" fill="#C9D6D9"/></svg>
+            {% elif "cafe" in listing.title|lower or "restaurant" in listing.category.name|lower %}
+              <svg viewBox="0 0 300 150"><rect width="300" height="150" fill="#EDF2F1"/><rect x="0" y="0" width="300" height="150" fill="#1C2B3A" opacity="0.03"/><circle cx="150" cy="55" r="26" fill="#D89B3C" opacity="0.7"/><rect x="90" y="95" width="120" height="9" fill="#1C2B3A"/><rect x="110" y="112" width="80" height="6" fill="#4A7A96"/></svg>
+            {% elif "gym" in listing.title|lower or "fitness" in listing.category.name|lower %}
+              <svg viewBox="0 0 300 150"><rect width="300" height="150" fill="#EDF2F1"/><rect x="20" y="20" width="80" height="80" fill="#4A7A96" opacity="0.5"/><rect x="110" y="20" width="80" height="38" fill="#D89B3C" opacity="0.6"/><rect x="110" y="62" width="80" height="38" fill="#1C2B3A" opacity="0.4"/><rect x="200" y="20" width="80" height="80" fill="#C9D6D9"/></svg>
+            {% else %}
+              <svg viewBox="0 0 300 150">
+                <rect width="300" height="150" fill="#EDF2F1"/>
+                <rect x="0" y="0" width="300" height="26" fill="#25445A"/>
+                <rect x="20" y="46" width="150" height="10" fill="#1C2B3A"/>
+                <rect x="20" y="64" width="190" height="6" fill="#4A7A96"/>
+                <rect x="20" y="76" width="110" height="6" fill="#4A7A96"/>
+                <rect x="20" y="98" width="70" height="28" rx="3" fill="#D89B3C"/>
+                <circle cx="230" cy="85" r="24" fill="#C9D6D9" opacity="0.8"/>
+              </svg>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        <div class="listing-body">
+          <span class="listing-tag">
+            {{ listing.category.name|default:"General" }} · {{ listing.get_listing_type_display }}
+            {% if listing.listing_type == 'paid' and listing.starting_price %}
+               · ${{ listing.starting_price }}
+            {% endif %}
+          </span>
+          <h3><a href="{% url 'listing_detail' listing.pk %}">{{ listing.title }}</a></h3>
+          <p>{{ listing.description|truncatewords:15 }}</p>
+          
+          <div class="listing-foot">
+            <div class="dev-tag">
+              <span class="dev-avatar mono">{{ listing.developer.username|slice:":1" }}</span> 
+              Built by {{ listing.developer.username }}
+            </div>
+            <div class="listing-actions">
+              <a href="{{ listing.live_url }}" target="_blank" class="icon-btn live">View live</a>
+              <a href="{% url 'listing_detail' listing.pk %}" class="icon-btn contact">Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-state" style="grid-column: span 3;">
+        <p>No listings found. Be the first to list a project!</p>
+        <a href="{% url 'add_listing' %}" class="btn btn-primary" style="margin-top: 14px;">List your project</a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+</div> <!-- Close wrap container to make blueprint background full-width -->
+
+<!-- HOW IT WORKS -->
+<section id="how" class="blueprint-bg">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow mono">How it works</span>
+      <h2>Two sides, one platform.</h2>
+      <p>Whether you're searching for a site or listing one you built, everything — browsing, deciding, and messaging — stays on Oreand.</p>
+    </div>
+
+    <div class="track-tabs">
+      <button class="track-tab active" data-track="searcher-track">IF YOU'RE SEARCHING FOR A WEBSITE</button>
+      <button class="track-tab" data-track="developer-track">IF YOU'RE A DEVELOPER</button>
+    </div>
+
+    <div class="how-container">
+      <!-- Searcher Track -->
+      <div id="searcher-track" class="how-track active">
+        <div class="how-row">
+          <div class="how-step">
+            <span class="stepno mono">Step 1</span>
+            <h3>Search your category</h3>
+            <p>Type your business type — "dairy," "salon," "gym" — and Oreand shows every matching live site.</p>
+          </div>
+          <div class="how-step">
+            <span class="stepno mono">Step 2</span>
+            <h3>Open the live site</h3>
+            <p>Click through to the actual deployed website. See exactly what you'd be getting, not a sketch of it.</p>
+          </div>
+          <div class="how-step">
+            <span class="stepno mono">Step 3</span>
+            <h3>Contact the developer</h3>
+            <p>Like one? Message the developer who built it, right on Oreand, to get your own version made.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Developer Track -->
+      <div id="developer-track" class="how-track">
+        <div class="how-row">
+          <div class="how-step">
+            <span class="stepno mono">Step 1</span>
+            <h3>Deploy your project</h3>
+            <p>Build it and put it live — Render, Vercel, Netlify, wherever you already host.</p>
+          </div>
+          <div class="how-step">
+            <span class="stepno mono">Step 2</span>
+            <h3>List it on Oreand</h3>
+            <p>Paste the live link, pick a category, and add a short description of what it does.</p>
+          </div>
+          <div class="how-step">
+            <span class="stepno mono">Step 3</span>
+            <h3>Get contacted</h3>
+            <p>When someone likes your site, they message you directly on Oreand to hire you for their own version.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"> <!-- Reopen wrap container -->
+
+<!-- MESSAGING ILLUSTRATION BAND -->
+<section>
+  <div class="msg-band">
+    <div>
+      <h3>All the messaging happens on Oreand.</h3>
+      <p>No sharing personal numbers or emails upfront. A client finds a site they like, opens a conversation, and you take it from there — all inside the platform.</p>
+      <a href="{% url 'add_listing' %}" class="btn btn-ghost" style="border-color:#fff; color:#fff;">List your project</a>
+    </div>
+    <div class="msg-mock">
+      <div class="msg-line">
+        <span class="msg-av"></span>
+        <div class="bub">Hi! I saw the Greenfield Dairy site — I run a dairy in Indore, can you build something similar for me?</div>
+      </div>
+      <div class="msg-line me">
+        <div class="bub">Sure! Can you share your logo and product list to start?</div>
+      </div>
+      <div class="msg-line">
+        <span class="msg-av"></span>
+        <div class="bub">Sending it now. What's your timeline and rate?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING SECTION -->
+<section id="pricing">
+  <div class="section-head">
+    <span class="eyebrow mono">Paid or free</span>
+    <h2>List it however fits the work.</h2>
+    <p>Some projects are paid client work. Others are practice builds a student wants feedback on. Both belong on Oreand.</p>
+  </div>
+  <div class="split">
+    <div class="split-card">
+      <h3>Paid listings</h3>
+      <p style="color:#3C5464; font-size:14.5px;">For developers and freelancers offering real client work.</p>
+      <ul>
+        <li>Set your starting rate on your listing</li>
+        <li>Get contacted by real business owners</li>
+        <li>Build a track record of live, working sites</li>
+      </ul>
+    </div>
+    <div class="split-card free">
+      <h3>Free & student listings</h3>
+      <p style="color:#3C5464; font-size:14.5px;">For students showcasing coursework or practice projects.</p>
+      <ul>
+        <li>List projects at no cost</li>
+        <li>Get discovered by someone who needs exactly that</li>
+        <li>Turn a class project into your first real client</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div> <!-- Close wrap container to make CTA band full-width -->
+
+<!-- CTA BAND -->
+<section class="cta-band" id="list">
+  <div class="wrap">
+    <h2>Already built something? List it.</h2>
+    <p>Paste your live link, pick a category, and let the right person find it.</p>
+    <div class="row">
+      <a href="{% url 'add_listing' %}" class="btn btn-primary">List your project</a>
+      <a href="#browse" class="btn btn-ghost">Browse live sites</a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"> <!-- Reopen wrap for final footer alignment -->
+{% endblock %}

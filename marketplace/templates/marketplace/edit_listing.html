@@ -1,0 +1,35 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}Edit {{ listing.title }} — Oreand{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>Edit listing</h2>
+  <p style="color: #3C5464; font-size: 14.5px; margin-bottom: 24px;">
+    Update details for <strong>{{ listing.title }}</strong>.
+  </p>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <span class="form-help">{{ field.help_text }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+          <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <a href="{% url 'listing_detail' listing.pk %}" class="form-footer-link">Back to listing</a>
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

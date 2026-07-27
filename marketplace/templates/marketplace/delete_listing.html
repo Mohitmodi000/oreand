@@ -1,0 +1,21 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}Delete {{ listing.title }} — Oreand{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 480px;">
+  <h2 style="color: var(--red);">Delete listing?</h2>
+  <p style="color: #3C5464; font-size: 14.5px; margin-bottom: 24px; line-height: 1.6;">
+    Are you sure you want to delete the listing for <strong>{{ listing.title }}</strong>? This action is permanent and cannot be undone. All logs and associated records will be removed.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-actions">
+      <a href="{% url 'listing_detail' listing.pk %}" class="form-footer-link">Cancel</a>
+      <button type="submit" class="btn btn-danger">Yes, delete listing</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

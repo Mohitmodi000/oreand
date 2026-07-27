@@ -1,0 +1,43 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}Log in — Oreand{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 440px;">
+  <h2>Log in to Oreand</h2>
+
+  {% if form.errors or form.non_field_errors %}
+    <div class="alert alert-error" style="margin-bottom: 20px;">
+      Your username and password didn't match. Please try again.
+    </div>
+  {% endif %}
+
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      <label for="id_username">Username</label>
+      <input type="text" name="username" autofocus autocomplete="username" required id="id_username" placeholder="Enter username">
+    </div>
+
+    <div class="form-group">
+      <label for="id_password">Password</label>
+      <input type="password" name="password" autocomplete="current-password" required id="id_password" placeholder="Enter password">
+    </div>
+
+    <!-- Pass redirect target if set -->
+    {% if request.GET.next %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Log in</button>
+  </form>
+
+  <div style="text-align: center; margin-top: 24px; border-top: 1px solid var(--paper-line); padding-top: 18px;">
+    <p style="font-size: 13.5px; color: #3C5464;">
+      Don't have an account? <a href="{% url 'register' %}" class="form-footer-link" style="font-weight: 600;">Register here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

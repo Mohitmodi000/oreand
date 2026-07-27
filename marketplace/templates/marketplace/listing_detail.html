@@ -1,0 +1,111 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}{{ listing.title }} — built by {{ listing.developer.username }} — Oreand{% endblock %}
+
+{% block content %}
+<div class="detail-layout">
+  <!-- Main Column -->
+  <div class="detail-main">
+    <div class="browser-chrome">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <div class="url mono">{{ listing.live_url }}</div>
+      <a href="{{ listing.live_url }}" target="_blank" class="btn btn-ghost btn-small" style="padding: 2px 10px; font-size: 11px; margin-right: 8px;">Open link</a>
+    </div>
+
+    <!-- Website Mockup/Screenshot View -->
+    <div class="simulated-browser">
+      <div class="sim-site-body">
+        {% if listing.preview_image %}
+          <img src="{{ listing.preview_image.url }}" alt="{{ listing.title }} screenshot" style="width: 100%; border-radius: 4px;">
+        {% else %}
+          <!-- Custom simulated rendering block -->
+          <div style="background-color: var(--paper); border: 1.5px dashed var(--paper-line); border-radius: 6px; padding: 40px 24px; text-align: center; height: 100%;">
+            <h2 style="font-family: 'Fraunces', serif; color: var(--blue-deep); font-size: 26px; margin-bottom: 12px;">{{ listing.title }}</h2>
+            <span class="mono" style="background: var(--white); padding: 4px 10px; border-radius: 20px; font-size: 12px; color: var(--brass-dark); border: 1px solid var(--paper-line);">
+              {{ listing.category.name|default:"General Category" }} Website
+            </span>
+            <p style="color: #3C5464; font-size: 14.5px; max-width: 440px; margin: 20px auto 0;">
+              This is a live, deployed website. To test the active flows and layouts, click "Open link" in the browser address bar above.
+            </p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <span class="listing-tag">{{ listing.category.name|default:"General" }} · {{ listing.get_listing_type_display }}</span>
+      <h1>{{ listing.title }}</h1>
+      
+      <div class="detail-meta">
+        <div class="dev-tag">
+          <span class="dev-avatar mono">{{ listing.developer.username|slice:":1" }}</span>
+          <span>By <strong>{{ listing.developer.username }}</strong></span>
+        </div>
+        <span style="color: #7C93A1;">•</span>
+        <span class="mono" style="font-size: 13px;">Added on {{ listing.created_at|date:"F d, Y" }}</span>
+      </div>
+
+      <div class="detail-description">
+        <h3 style="font-size: 18px; margin-bottom: 8px;">About this project</h3>
+        <p style="white-space: pre-line;">{{ listing.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Column -->
+  <div class="detail-sidebar">
+    <div class="sidebar-card">
+      <h3>Project Status</h3>
+      
+      {% if listing.listing_type == 'paid' %}
+        <div class="rate-badge paid">
+          Paid · Starting rate: ${% if listing.starting_price %}{{ listing.starting_price }}{% else %}Negotiable{% endif %}
+        </div>
+        <p style="font-size: 13.5px; color: #3C5464; margin-bottom: 20px;">
+          This developer offers custom installations, tailoring this exact system for your business.
+        </p>
+      {% elif listing.listing_type == 'student' %}
+        <div class="rate-badge">
+          Student Project
+        </div>
+        <p style="font-size: 13.5px; color: #3C5464; margin-bottom: 20px;">
+          Created as educational coursework. Get in touch for code review, collaboration, or feedback.
+        </p>
+      {% else %}
+        <div class="rate-badge">
+          Free / Open Source
+        </div>
+        <p style="font-size: 13.5px; color: #3C5464; margin-bottom: 20px;">
+          Showcase project. You can request deployment support or contact the developer for basic configurations.
+        </p>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        {% if user == listing.developer %}
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+            <p class="mono" style="font-size: 12px; color: var(--green);">You are the owner of this project.</p>
+            <a href="{% url 'edit_listing' listing.pk %}" class="btn btn-ghost" style="width: 100%;">Edit details</a>
+            <a href="{% url 'delete_listing' listing.pk %}" class="btn btn-danger" style="width: 100%;">Remove listing</a>
+          </div>
+        {% else %}
+          <a href="{% url 'contact_developer' listing.pk %}" class="btn btn-primary" style="width: 100%;">
+            Contact Developer
+          </a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary" style="width: 100%;">
+          Log in to contact developer
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Safety & Trust</h3>
+      <p style="font-size: 13.5px; color: #3C5464; line-height: 1.5;">
+        All initial correspondence happens inside Oreand. Do not share sensitive billing credentials, access keys, or personal details until you have established trust with the developer.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

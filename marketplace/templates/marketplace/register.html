@@ -1,0 +1,38 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}Register — Oreand{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 460px;">
+  <h2>Create your account</h2>
+  <p style="color: #3C5464; font-size: 14px; margin-bottom: 24px;">
+    Join Oreand to list your live websites, browse developers, and start direct conversations.
+  </p>
+
+  <form method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <span class="form-help" style="font-size: 11px;">{{ field.help_text }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+          <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Create account</button>
+  </form>
+
+  <div style="text-align: center; margin-top: 24px; border-top: 1px solid var(--paper-line); padding-top: 18px;">
+    <p style="font-size: 13.5px; color: #3C5464;">
+      Already have an account? <a href="{% url 'login' %}" class="form-footer-link" style="font-weight: 600;">Log in here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

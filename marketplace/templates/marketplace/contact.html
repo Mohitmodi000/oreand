@@ -1,0 +1,43 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}Message {{ listing.developer.username }} — Oreand{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 600px;">
+  <h2>Contact Developer</h2>
+  
+  <div style="background-color: var(--paper); border: 1.5px solid var(--paper-line); border-radius: 4px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+    <div>
+      <span class="mono" style="font-size: 11px; text-transform: uppercase; color: var(--brass-dark); font-weight: 600;">Regarding project</span>
+      <h3 style="font-size: 18px; margin-top: 2px;">{{ listing.title }}</h3>
+    </div>
+    <div class="dev-tag">
+      <span class="dev-avatar mono">{{ listing.developer.username|slice:":1" }}</span>
+      <span style="font-size: 13.5px;">Built by <strong>{{ listing.developer.username }}</strong></span>
+    </div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">Your Message</label>
+        {{ field }}
+        {% if field.help_text %}
+          <span class="form-help">{{ field.help_text }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+          <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <a href="{% url 'listing_detail' listing.pk %}" class="form-footer-link">Cancel</a>
+      <button type="submit" class="btn btn-primary">Send message</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

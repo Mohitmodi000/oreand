@@ -1,0 +1,35 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block title %}List a project — Oreand{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>List your project</h2>
+  <p style="color: #3C5464; font-size: 14.5px; margin-bottom: 24px;">
+    Share a deployed, live website that you built. Let potential clients browse it and contact you directly.
+  </p>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <span class="form-help">{{ field.help_text }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+          <span class="form-error">{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <a href="{% url 'home' %}" class="form-footer-link">Cancel</a>
+      <button type="submit" class="btn btn-primary">Publish listing</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Oreand — Find a website already built. Meet who built it.{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <header>
+    <nav class="wrap">
+      <a href="{% url 'home' %}" class="logo" style="display: flex; align-items: center; gap: 8px;">
+        <img src="{% static 'images/logo.jpg' %}" alt="Oreand Logo" style="height: 32px; width: auto; border-radius: 4px; mix-blend-mode: multiply;">
+        <span>Oreand</span>
+      </a>
+      
+      <!-- Desktop-only navigation links -->
+      <div class="navlinks">
+        <a href="{% url 'home' %}#browse">Browse websites</a>
+        <a href="{% url 'home' %}#how">How it works</a>
+        <a href="{% url 'home' %}#pricing">Paid or free</a>
+      </div>
+
+      <!-- Desktop-only user authentication navigation -->
+      <div class="user-nav desktop-only">
+        {% if user.is_authenticated %}
+          <span class="user-welcome">Hello, <strong>{{ user.username }}</strong></span>
+          <a href="{% url 'inbox' %}" class="btn btn-ghost btn-small">Inbox</a>
+          <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small">List a project</a>
+          <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-small">Logout</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-ghost btn-small">Log in</a>
+          <a href="{% url 'register' %}" class="btn btn-primary btn-small">Register</a>
+        {% endif %}
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="hamburger-btn" aria-label="Toggle menu" id="menu-toggle">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </nav>
+
+    <!-- Mobile Slide-out Drawer Navigation -->
+    <div class="mobile-drawer" id="mobile-menu">
+      <div class="mobile-drawer-header">
+        <a href="{% url 'home' %}" class="logo" style="display: flex; align-items: center; gap: 8px;">
+          <img src="{% static 'images/logo.jpg' %}" alt="Oreand Logo" style="height: 32px; width: auto; border-radius: 4px; mix-blend-mode: multiply;">
+          <span>Oreand</span>
+        </a>
+        <button class="close-btn" id="menu-close">&times;</button>
+      </div>
+      <div class="mobile-drawer-links">
+        <a href="{% url 'home' %}#browse" class="mobile-link">Browse websites</a>
+        <a href="{% url 'home' %}#how" class="mobile-link">How it works</a>
+        <a href="{% url 'home' %}#pricing" class="mobile-link">Paid or free</a>
+        
+        <div class="mobile-divider"></div>
+        
+        {% if user.is_authenticated %}
+          <div class="mobile-user-info">
+            <span>Logged in as <strong>{{ user.username }}</strong></span>
+          </div>
+          <a href="{% url 'inbox' %}" class="mobile-link">Inbox</a>
+          <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small" style="margin-top: 14px; width: 100%;">List a project</a>
+          <form action="{% url 'logout' %}" method="post" style="margin-top: 10px; width: 100%;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-small" style="width: 100%;">Logout</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-ghost btn-small" style="width: 100%; margin-bottom: 8px;">Log in</a>
+          <a href="{% url 'register' %}" class="btn btn-primary btn-small" style="width: 100%;">Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+          <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="logo" style="display: flex; align-items: center; gap: 8px;">
+        <img src="{% static 'images/logo.jpg' %}" alt="Oreand Logo" style="height: 28px; width: auto; border-radius: 4px; background: white; padding: 2px;">
+        <span>Oreand</span>
+      </div>
+      <div>© 2026 Oreand. Every listing is a live website.</div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
