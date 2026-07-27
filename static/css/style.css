@@ -1229,6 +1229,12 @@ footer .logo .mark {
     padding: 0 16px;
   }
   
+  footer .wrap {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
   .listing-grid {
     grid-template-columns: 1fr;
   }
