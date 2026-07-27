@@ -19,6 +19,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -1088,15 +1089,17 @@ footer .logo .mark {
   height: 100vh;
   background: var(--white);
   box-shadow: -10px 0 30px rgba(0,0,0,0.15);
-  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
   z-index: 102;
   display: flex;
   flex-direction: column;
   padding: 24px;
+  visibility: hidden;
 }
 
 .mobile-drawer.active {
   right: 0;
+  visibility: visible;
 }
 
 .mobile-backdrop {
