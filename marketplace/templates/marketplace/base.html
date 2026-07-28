@@ -49,40 +49,40 @@
         <span class="bar"></span>
       </button>
     </nav>
-
-    <!-- Mobile Slide-out Drawer Navigation -->
-    <div class="mobile-drawer" id="mobile-menu">
-      <div class="mobile-drawer-header">
-        <a href="{% url 'home' %}" class="logo" style="display: flex; align-items: center; gap: 8px;">
-          <img src="{% static 'images/logo.jpg' %}" alt="Oreand Logo" style="height: 32px; width: auto; border-radius: 4px; mix-blend-mode: multiply;">
-          <span>Oreand</span>
-        </a>
-        <button class="close-btn" id="menu-close">&times;</button>
-      </div>
-      <div class="mobile-drawer-links">
-        <a href="{% url 'home' %}#browse" class="mobile-link">Browse websites</a>
-        <a href="{% url 'home' %}#how" class="mobile-link">How it works</a>
-        <a href="{% url 'home' %}#pricing" class="mobile-link">Paid or free</a>
-        
-        <div class="mobile-divider"></div>
-        
-        {% if user.is_authenticated %}
-          <div class="mobile-user-info">
-            <span>Logged in as <strong>{{ user.username }}</strong></span>
-          </div>
-          <a href="{% url 'inbox' %}" class="mobile-link">Inbox</a>
-          <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small" style="margin-top: 14px; width: 100%;">List a project</a>
-          <form action="{% url 'logout' %}" method="post" style="margin-top: 10px; width: 100%;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-ghost btn-small" style="width: 100%;">Logout</button>
-          </form>
-        {% else %}
-          <a href="{% url 'login' %}" class="btn btn-ghost btn-small" style="width: 100%; margin-bottom: 8px;">Log in</a>
-          <a href="{% url 'register' %}" class="btn btn-primary btn-small" style="width: 100%;">Register</a>
-        {% endif %}
-      </div>
-    </div>
   </header>
+
+  <!-- Mobile Slide-out Drawer Navigation -->
+  <div class="mobile-drawer" id="mobile-menu">
+    <div class="mobile-drawer-header">
+      <a href="{% url 'home' %}" class="logo" style="display: flex; align-items: center; gap: 8px;">
+        <img src="{% static 'images/logo.jpg' %}" alt="Oreand Logo" style="height: 32px; width: auto; border-radius: 4px; mix-blend-mode: multiply;">
+        <span>Oreand</span>
+      </a>
+      <button class="close-btn" id="menu-close">&times;</button>
+    </div>
+    <div class="mobile-drawer-links">
+      <a href="{% url 'home' %}#browse" class="mobile-link">Browse websites</a>
+      <a href="{% url 'home' %}#how" class="mobile-link">How it works</a>
+      <a href="{% url 'home' %}#pricing" class="mobile-link">Paid or free</a>
+      
+      <div class="mobile-divider"></div>
+      
+      {% if user.is_authenticated %}
+        <div class="mobile-user-info">
+          <span>Logged in as <strong>{{ user.username }}</strong></span>
+        </div>
+        <a href="{% url 'inbox' %}" class="mobile-link">Inbox</a>
+        <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small" style="margin-top: 14px; width: 100%;">List a project</a>
+        <form action="{% url 'logout' %}" method="post" style="margin-top: 10px; width: 100%;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-ghost btn-small" style="width: 100%;">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-ghost btn-small" style="width: 100%; margin-bottom: 8px;">Log in</a>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-small" style="width: 100%;">Register</a>
+      {% endif %}
+    </div>
+  </div>
 
   <main class="wrap">
     {% if messages %}
