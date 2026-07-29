@@ -30,7 +30,12 @@
       <div class="user-nav desktop-only">
         {% if user.is_authenticated %}
           <span class="user-welcome">Hello, <strong>{{ user.username }}</strong></span>
-          <a href="{% url 'inbox' %}" class="btn btn-ghost btn-small">Inbox</a>
+          <a href="{% url 'inbox' %}" class="btn btn-ghost btn-small" style="position: relative; display: inline-flex; align-items: center; gap: 6px;">
+            Inbox
+            {% if unread_messages_count > 0 %}
+              <span style="background: var(--red); color: var(--white); border-radius: 50%; padding: 2px 7px; font-size: 10px; font-weight: bold; font-family: 'IBM Plex Mono', monospace; line-height: 1;">{{ unread_messages_count }}</span>
+            {% endif %}
+          </a>
           <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small">List a project</a>
           <form action="{% url 'logout' %}" method="post" style="display: inline;">
             {% csrf_token %}
@@ -71,7 +76,12 @@
         <div class="mobile-user-info">
           <span>Logged in as <strong>{{ user.username }}</strong></span>
         </div>
-        <a href="{% url 'inbox' %}" class="mobile-link">Inbox</a>
+          <a href="{% url 'inbox' %}" class="mobile-link" style="display: flex; align-items: center; justify-content: space-between;">
+            <span>Inbox</span>
+            {% if unread_messages_count > 0 %}
+              <span style="background: var(--red); color: var(--white); border-radius: 50%; padding: 2px 7px; font-size: 10px; font-weight: bold; font-family: 'IBM Plex Mono', monospace; line-height: 1;">{{ unread_messages_count }}</span>
+            {% endif %}
+          </a>
         <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small" style="margin-top: 14px; width: 100%;">List a project</a>
         <form action="{% url 'logout' %}" method="post" style="margin-top: 10px; width: 100%;">
           {% csrf_token %}

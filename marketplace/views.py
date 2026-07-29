@@ -280,12 +280,18 @@ def contact_developer(request, pk):
 @login_required
 def inbox(request):
 
+    # Mark all unread received messages as read upon opening the inbox
+    Message.objects.filter(
+        receiver=request.user,
+        is_read=False
+    ).update(is_read=True)
+
     received_messages = Message.objects.filter(
         receiver=request.user
     ).select_related(
         'sender',
         'listing'
-    )
+    ).order_by('-created_at')
 
     return render(
         request,
