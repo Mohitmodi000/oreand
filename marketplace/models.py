@@ -55,6 +55,17 @@ class WebsiteListing(models.Model):
         null=True
     )
 
+    currency = models.CharField(
+        max_length=3,
+        choices=[
+            ('USD', 'USD ($)'),
+            ('INR', 'INR (₹)'),
+            ('EUR', 'EUR (€)'),
+            ('GBP', 'GBP (£)'),
+        ],
+        default='USD'
+    )
+
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

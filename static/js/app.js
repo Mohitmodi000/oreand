@@ -130,5 +130,60 @@ document.addEventListener('DOMContentLoaded', function () {
       link.addEventListener('click', closeMenu);
     });
   }
+
+  // 4. GLOBAL CURRENCY SELECTOR & CONVERTER
+  const currencySelects = document.querySelectorAll('.currency-select');
+  const priceDisplays = document.querySelectorAll('.price-display');
+
+  // Exchange rates relative to 1 USD
+  const exchangeRates = {
+    USD: 1.0,
+    INR: 83.50,
+    EUR: 0.92,
+    GBP: 0.78
+  };
+
+  const currencySymbols = {
+    USD: '$',
+    INR: '₹',
+    EUR: '€',
+    GBP: '£'
+  };
+
+  function updateCurrency(targetCurrency) {
+    // Sync all dropdown selectors on the page
+    currencySelects.forEach(select => {
+      select.value = targetCurrency;
+    });
+
+    // Update all price tags with the calculated currency amount
+    priceDisplays.forEach(display => {
+      const baseCurrency = display.getAttribute('data-base-currency') || 'USD';
+      const baseAmount = parseFloat(display.getAttribute('data-base-amount')) || 0;
+
+      if (baseAmount > 0) {
+        // Convert to USD standard base, then convert to target currency
+        const amountInUSD = baseAmount / (exchangeRates[baseCurrency] || 1.0);
+        const convertedAmount = amountInUSD * (exchangeRates[targetCurrency] || 1.0);
+        const symbol = currencySymbols[targetCurrency] || '$';
+        display.textContent = `${symbol}${convertedAmount.toFixed(2)}`;
+      }
+    });
+
+    // Persist choice across page navigation
+    localStorage.setItem('selectedCurrency', targetCurrency);
+  }
+
+  if (currencySelects.length) {
+    currencySelects.forEach(select => {
+      select.addEventListener('change', (e) => {
+        updateCurrency(e.target.value);
+      });
+    });
+
+    // Load saved preference or fallback to USD
+    const savedCurrency = localStorage.getItem('selectedCurrency') || 'USD';
+    updateCurrency(savedCurrency);
+  }
   
 });

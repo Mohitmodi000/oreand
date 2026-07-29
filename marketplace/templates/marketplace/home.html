@@ -80,7 +80,7 @@
           <span class="listing-tag">
             {{ listing.category.name|default:"General" }} · {{ listing.get_listing_type_display }}
             {% if listing.listing_type == 'paid' and listing.starting_price %}
-               · ${{ listing.starting_price }}
+               · <span class="price-display" data-base-currency="{{ listing.currency }}" data-base-amount="{{ listing.starting_price }}">{% if listing.currency == 'USD' %}${% elif listing.currency == 'INR' %}₹{% elif listing.currency == 'EUR' %}€{% elif listing.currency == 'GBP' %}£{% endif %}{{ listing.starting_price }}</span>
             {% endif %}
           </span>
           <h3><a href="{% url 'listing_detail' listing.pk %}">{{ listing.title }}</a></h3>

@@ -28,6 +28,15 @@
 
       <!-- Desktop-only user authentication navigation -->
       <div class="user-nav desktop-only">
+        <div class="currency-selector" style="margin-right: 4px;">
+          <select id="global-currency-select" class="currency-select" aria-label="Select Currency" style="padding: 6px 10px; border-radius: 4px; border: 1.5px solid var(--ink); background: var(--white); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: bold; cursor: pointer; outline: none;">
+            <option value="USD">USD ($)</option>
+            <option value="INR">INR (₹)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+          </select>
+        </div>
+
         {% if user.is_authenticated %}
           <span class="user-welcome">Hello, <strong>{{ user.username }}</strong></span>
           <a href="{% url 'inbox' %}" class="btn btn-ghost btn-small" style="position: relative; display: inline-flex; align-items: center; gap: 6px;">
@@ -69,6 +78,16 @@
       <a href="{% url 'home' %}#browse" class="mobile-link">Browse websites</a>
       <a href="{% url 'home' %}#how" class="mobile-link">How it works</a>
       <a href="{% url 'home' %}#pricing" class="mobile-link">Paid or free</a>
+      
+      <div class="mobile-link" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(201, 214, 217, 0.3); padding: 12px 0;">
+        <span>Select Currency</span>
+        <select id="mobile-currency-select" class="currency-select" aria-label="Select Currency" style="padding: 6px 10px; border-radius: 4px; border: 1.5px solid var(--ink); background: var(--white); font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: bold; cursor: pointer;">
+          <option value="USD">USD ($)</option>
+          <option value="INR">INR (₹)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+        </select>
+      </div>
       
       <div class="mobile-divider"></div>
       

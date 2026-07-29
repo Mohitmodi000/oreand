@@ -29,6 +29,7 @@ class WebsiteListingForm(forms.ModelForm):
             'preview_image',
             'listing_type',
             'starting_price',
+            'currency',
         ]
 
         widgets = {

@@ -60,7 +60,7 @@
       
       {% if listing.listing_type == 'paid' %}
         <div class="rate-badge paid">
-          Paid · Starting rate: ${% if listing.starting_price %}{{ listing.starting_price }}{% else %}Negotiable{% endif %}
+          Paid · Starting rate: {% if listing.starting_price %}<span class="price-display" data-base-currency="{{ listing.currency }}" data-base-amount="{{ listing.starting_price }}">{% if listing.currency == 'USD' %}${% elif listing.currency == 'INR' %}₹{% elif listing.currency == 'EUR' %}€{% elif listing.currency == 'GBP' %}£{% endif %}{{ listing.starting_price }}</span>{% else %}Negotiable{% endif %}
         </div>
         <p style="font-size: 13.5px; color: #3C5464; margin-bottom: 20px;">
           This developer offers custom installations, tailoring this exact system for your business.
