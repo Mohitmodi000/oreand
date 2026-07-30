@@ -179,6 +179,11 @@ document.addEventListener('DOMContentLoaded', function () {
       select.addEventListener('change', (e) => {
         updateCurrency(e.target.value);
       });
+      
+      // Stop clicks on the dropdown from bubbling up and triggering mobile menu close listeners
+      select.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
     });
 
     // Load saved preference or fallback to USD
