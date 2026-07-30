@@ -4,7 +4,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>{% block title %}Oreand — Find a website already built. Meet who built it.{% endblock %}</title>
+  <title>{% block title %}EduSearch — Find a website already built. Meet who built it.{% endblock %}</title>
+  
+  <!-- PWA configurations -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <meta name="theme-color" content="#1C2B3A">
+  
+  <!-- Apple WebApp Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EduSearch">
+  <link rel="apple-touch-icon" href="{% static 'images/logo.jpg' %}">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -42,7 +53,7 @@
           <a href="{% url 'inbox' %}" class="btn btn-ghost btn-small" style="position: relative; display: inline-flex; align-items: center; gap: 6px;">
             Inbox
             {% if unread_messages_count > 0 %}
-              <span style="background: var(--red); color: var(--white); border-radius: 50%; padding: 2px 7px; font-size: 10px; font-weight: bold; font-family: 'IBM Plex Mono', monospace; line-height: 1;">{{ unread_messages_count }}</span>
+              <span class="unread-badge" style="background: var(--red); color: var(--white); border-radius: 50%; padding: 2px 7px; font-size: 10px; font-weight: bold; font-family: 'IBM Plex Mono', monospace; line-height: 1;">{{ unread_messages_count }}</span>
             {% endif %}
           </a>
           <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small">List a project</a>
@@ -98,7 +109,7 @@
           <a href="{% url 'inbox' %}" class="mobile-link" style="display: flex; align-items: center; justify-content: space-between;">
             <span>Inbox</span>
             {% if unread_messages_count > 0 %}
-              <span style="background: var(--red); color: var(--white); border-radius: 50%; padding: 2px 7px; font-size: 10px; font-weight: bold; font-family: 'IBM Plex Mono', monospace; line-height: 1;">{{ unread_messages_count }}</span>
+              <span class="unread-badge" style="background: var(--red); color: var(--white); border-radius: 50%; padding: 2px 7px; font-size: 10px; font-weight: bold; font-family: 'IBM Plex Mono', monospace; line-height: 1;">{{ unread_messages_count }}</span>
             {% endif %}
           </a>
         <a href="{% url 'add_listing' %}" class="btn btn-primary btn-small" style="margin-top: 14px; width: 100%;">List a project</a>
@@ -139,6 +150,18 @@
   </footer>
 
   <script src="{% static 'js/app.js' %}"></script>
+  
+  <!-- Register PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Service Worker registered successfully. Scope:', reg.scope))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
+  </script>
+  
   {% block extra_js %}{% endblock %}
 </body>
 </html>

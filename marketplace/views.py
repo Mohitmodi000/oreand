@@ -300,3 +300,36 @@ def inbox(request):
             'messages': received_messages
         }
     )
+
+
+from django.http import JsonResponse
+
+@login_required
+def inbox_api(request):
+    mark_read = request.GET.get('mark_read', 'false') == 'true'
+    
+    if mark_read:
+        Message.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+        
+    unread_count = Message.objects.filter(receiver=request.user, is_read=False).count()
+    
+    received_messages = Message.objects.filter(
+        receiver=request.user
+    ).select_related('sender', 'listing').order_by('-created_at')
+    
+    messages_list = []
+    for msg in received_messages:
+        messages_list.append({
+            'id': msg.id,
+            'sender': msg.sender.username,
+            'listing_title': msg.listing.title,
+            'listing_pk': msg.listing.pk,
+            'message': msg.message,
+            'created_at': msg.created_at.strftime('%b %d, %Y · %H:%M'),
+            'is_read': msg.is_read
+        })
+        
+    return JsonResponse({
+        'unread_count': unread_count,
+        'messages': messages_list
+    })

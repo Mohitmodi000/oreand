@@ -185,5 +185,131 @@ document.addEventListener('DOMContentLoaded', function () {
     const savedCurrency = localStorage.getItem('selectedCurrency') || 'USD';
     updateCurrency(savedCurrency);
   }
+
+  // 5. REAL-TIME LIVE INBOX POLLING (NO REFRESH CHAT)
+  const isLoggedIn = document.querySelector('a[href="/inbox/"]') !== null;
+
+  if (isLoggedIn) {
+    const isInboxPage = window.location.pathname === '/inbox/';
+    const pollInterval = isInboxPage ? 4000 : 10000; // Poll faster on the inbox page
+
+    let lastMessagesCount = null;
+    let lastLatestMessageId = null;
+
+    function pollInbox() {
+      const url = `/inbox/api/?mark_read=${isInboxPage ? 'true' : 'false'}`;
+      
+      fetch(url)
+        .then(res => {
+          if (!res.ok) throw new Error('Not authenticated');
+          return res.json();
+        })
+        .then(data => {
+          // 1. Update unread notification badges in header & mobile drawer
+          updateNavBadges(data.unread_count);
+
+          // 2. If on inbox page, dynamically update the messages list
+          if (isInboxPage) {
+            const currentCount = data.messages.length;
+            const currentLatestId = currentCount > 0 ? data.messages[0].id : 0;
+
+            // Check if we received new messages
+            if (lastMessagesCount !== null && (currentCount !== lastMessagesCount || currentLatestId !== lastLatestMessageId)) {
+              rebuildInboxDOM(data.messages);
+            }
+
+            // Save state for next poll comparison
+            lastMessagesCount = currentCount;
+            lastLatestMessageId = currentLatestId;
+          }
+        })
+        .catch(err => {
+          console.log('Inbox polling suspended:', err.message);
+        });
+    }
+
+    function updateNavBadges(count) {
+      // Find all unread-badge containers
+      const inboxLinks = [
+        document.querySelector('.desktop-only a[href="/inbox/"]'),
+        document.querySelector('.mobile-drawer-links a[href="/inbox/"]')
+      ];
+
+      inboxLinks.forEach(link => {
+        if (!link) return;
+        let badge = link.querySelector('.unread-badge');
+
+        if (count > 0) {
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'unread-badge';
+            badge.style.cssText = "background: var(--red); color: var(--white); border-radius: 50%; padding: 2px 7px; font-size: 10px; font-weight: bold; font-family: 'IBM Plex Mono', monospace; line-height: 1;";
+            if (link.classList.contains('mobile-link')) {
+              link.appendChild(badge);
+            } else {
+              badge.style.marginLeft = "6px";
+              link.appendChild(badge);
+            }
+          }
+          badge.textContent = count;
+        } else {
+          if (badge) badge.remove();
+        }
+      });
+    }
+
+    function rebuildInboxDOM(messages) {
+      const inboxList = document.querySelector('.inbox-list');
+      if (!inboxList) return;
+
+      const headerHTML = `
+        <div class="inbox-header">
+          <h2>Conversations Inbox</h2>
+          <span class="mono" style="font-size: 12px; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 12px;">
+            ${messages.length} message${messages.length !== 1 ? 's' : ''} received
+          </span>
+        </div>
+      `;
+
+      if (messages.length === 0) {
+        inboxList.innerHTML = headerHTML + `
+          <div class="empty-state">
+            <p style="font-size: 16px; margin-bottom: 12px;">Your inbox is empty.</p>
+            <p style="font-size: 13.5px; color: #7C93A1;">When other users message you about your listed projects, their inquiries will appear here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let itemsHTML = '';
+      messages.forEach(msg => {
+        itemsHTML += `
+          <div class="inbox-item">
+            <div class="inbox-item-meta">
+              <div class="dev-tag">
+                <span class="dev-avatar mono" style="background-color: var(--brass-dark);">${msg.sender.charAt(0)}</span>
+                <span>From <strong>${msg.sender}</strong></span>
+              </div>
+              <span class="mono">${msg.created_at}</span>
+            </div>
+            
+            <div class="inbox-item-title">
+              Regarding: <a href="/listing/${msg.listing_pk}/" class="form-footer-link" style="font-weight: bold;">${msg.listing_title}</a>
+            </div>
+
+            <div class="inbox-item-message">
+              ${msg.message.replace(/\n/g, '<br>')}
+            </div>
+          </div>
+        `;
+      });
+
+      inboxList.innerHTML = headerHTML + itemsHTML;
+    }
+
+    // Run initial poll and start interval
+    pollInbox();
+    setInterval(pollInbox, pollInterval);
+  }
   
 });

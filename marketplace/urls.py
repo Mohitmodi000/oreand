@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import TemplateView
 
 from django.contrib.auth import views as auth_views
 
@@ -67,5 +68,20 @@ urlpatterns = [
         'inbox/',
         views.inbox,
         name='inbox'
+    ),
+
+    path(
+        'inbox/api/',
+        views.inbox_api,
+        name='inbox_api'
+    ),
+
+    path(
+        'sw.js',
+        TemplateView.as_view(
+            template_name='sw.js',
+            content_type='application/javascript'
+        ),
+        name='sw_js'
     ),
 ]
