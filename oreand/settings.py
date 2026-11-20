@@ -27,7 +27,27 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-jrc2gcf2!0*lr5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,localhost:2343').split(',')
+# Parse ALLOWED_HOSTS from environment or default to local + Vercel
+raw_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+if raw_hosts:
+    ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'localhost:2343']
+
+# Always allow Vercel domains (leading dot matches all preview and production subdomains)
+if '.vercel.app' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.vercel.app')
+if '.now.sh' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.now.sh')
+
+# CSRF trusted origins for form submissions / logins on Vercel
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.vercel.app',
+    'https://*.now.sh',
+]
+raw_csrf = os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '')
+if raw_csrf:
+    CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in raw_csrf.split(',') if origin.strip()])
 
 
 # Application definition
